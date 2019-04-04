@@ -1,0 +1,435 @@
+﻿@model FaceBookChat.ViewModels.MessagesWithUsers
+@{
+    Layout = null;
+    var messageFrom = Session["UserName"];
+}
+
+<!DOCTYPE html>
+
+
+<!------ Include the above in your HEAD tag ---------->
+
+<html>
+<head>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet" />
+
+    <link href="~/Content/fontawesome/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/Chat1.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <h3 class=" text-center">Messaging @messageFrom</h3>
+        <div class="messaging">
+            <div class="inbox_msg">
+                <div class="inbox_people">
+                    <div class="headind_srch">
+                        <div class="recent_heading">
+                            <h4>Recent</h4>
+                        </div>
+                        <div class="srch_bar">
+                            <div class="stylish-input-group">
+                                <i class="fa fa-users" aria-hidden="true" style="cursor:pointer"  data-toggle="modal" data-target="#modalGroup"></i>
+                                <input type="text" class="search-bar" placeholder="Search">
+                                <span class="input-group-addon">
+                                    <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="inbox_chat">
+
+                        <!--Start-->
+                        <!--Users-->
+                        @foreach (var item in Model.Users)
+                        {
+                            if (!item.Name.Equals(messageFrom))
+                            {
+                                <div class="chat_list" style="cursor:default;" onclick="UserMessage('@item.Name', event, false)">
+                                    <div class="chat_people">
+                                        <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                                        <div class="chat_ib">
+
+                                            <h5>@item.Name<span class="chat_date">Dec 25</span></h5>
+                                            <p>
+                                                Test, which is a new approach to have all solutions
+                                                astrology under one roof.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        <!--Groups-->
+                        @foreach (var item in Model.Groups)
+                        {
+                            if (!item.Name.Equals(messageFrom))
+                            {
+                                <div class="chat_list" style="cursor:default;" onclick="UserMessage('@item.Name', event, true)">
+                                    <div class="chat_people">
+                                        <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                                        <div class="chat_ib">
+
+                                            <h5>@item.Name       <i class="fa fa-plus" style="cursor:pointer;" onclick="AddToGroup('@item.Name', event)"></i><span class="chat_date">Dec 25</span></h5>
+                                            <p>
+                                                Test, which is a new approach to have all solutions
+                                                astrology under one roof.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                        <!--End-->
+
+                      
+                    </div>
+                </div>
+                <!--Right-->
+                <div class="mesgs">
+                    <div class="msg_history">
+                        <!--Incoming My Friend-->
+                        <!--OutComing ME -->
+
+
+                    </div>
+                    <div class="type_msg">
+                        <div class="input_msg_write">
+                            <input type="text" class="write_msg" placeholder="Type a message" />
+                            <button class="msg_send_btn" type="submit" onclick="sendMSG('@messageFrom')"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <p class="text-center top_spac"> Design by <a target="_blank" href="#">Sunil Rajput</a></p>
+
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="modalGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100 font-weight-bold">New Group</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+                    <div class="md-form mb-5">
+                        <input type="text" class="form-control validate" placeholder="Group Name">
+                        @*<label data-error="wrong" data-success="right" for="defaultForm-email">Your email</label>*@
+                    </div>
+                    <input id="myAutocomplete" type="text" />
+
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-default">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    <!--Scripts-->
+    @*<script src="~/Scripts/jquery-1.10.2.min.js"></script>*@
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+    <script src="~/Scripts/jquery.signalR-2.4.0.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script> 
+    <script src="~/Scripts/jquery.autocomplete.multiselect.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script>
+
+       // myDiv = $('.msg_history')[0]; myDiv.scrollTop = myDiv.scrollHeight
+        msgHistoryDiv = $('.msg_history')[0]; msgHistoryDiv.scrollTop = msgHistoryDiv.scrollHeight;
+
+        let _Proxy,
+            messageTo,
+            messageFrom,
+            isGroup,
+            userId;
+        $(function () {
+            
+            messageFrom = '@Session["UserName"]'
+
+            _Proxy = $.connection.messageHub;
+            $.connection.hub.start();
+
+            //BroadCast To Sender
+            _Proxy.client.broadCastMessageToSender = function (from, message, messageDate) {
+                console.log("Broadcast Message Sender", from, message);
+
+                console.log("UserName", messageFrom);
+                console.log(message, message.Time)
+
+                //let messageDate = getMessageTime(message.Time);
+
+                senderMessages(message, messageDate);
+
+                msgHistoryDiv = $('.msg_history')[0]; msgHistoryDiv.scrollTop = msgHistoryDiv.scrollHeight
+
+                broadCatSendedToGroup
+            }// BroadCast To Sender
+
+            _Proxy.client.broadCatSendedToGroup = function (from,to, message, messageDate) {
+                console.log("BroadCat Sended To Group");
+                //From Check
+                //let messageDate = getMessageTime(message.Time);
+
+                reciverMessages(message, messageDate);
+                msgHistoryDiv = $('.msg_history')[0]; msgHistoryDiv.scrollTop = msgHistoryDiv.scrollHeight
+
+            }
+            //BroadCast To Reciver
+            _Proxy.client.broadCastMessageToReciver = function (to, message, messageDate) {
+
+                console.log("Broadcast Message Reciver", to, messageTo);
+                //From Check
+
+               //let messageDate = getMessageTime(message.Time);
+
+               reciverMessages(message, messageDate);
+                msgHistoryDiv = $('.msg_history')[0]; msgHistoryDiv.scrollTop = msgHistoryDiv.scrollHeight
+
+
+            }// BroadCast To Reciever
+
+
+            _Proxy.client.broadCastToOtherInGroupWhoJoined = function (user, groupName) {
+                console.log("broadCastToOtherIn Group Who Joined", user, groupName);
+
+            }// BroadCast To Other In Group Who Joined
+        });// Load
+
+        // Send Message To my friend
+        function sendMSG(messageFrom) {
+            console.log(`Click button `);
+            console.log(messageFrom, messageTo, $(".write_msg").val());
+
+            _Proxy.server.sendMessage(messageFrom, messageTo, $(".write_msg").val(), isGroup);
+        }
+
+
+        // All Messages Between Me && My Friend
+        function UserMessage(_messageTo, event, Group) {
+            messageTo = _messageTo;
+            isGroup = Group;
+            console.log("Message Between Me and My Friend " + messageTo + event + Group);
+
+            //  Ajax Users
+            if (!Group) {
+                $.ajax({
+                    url: "http://localhost:52996/MessageUsers/GetMessages/" + messageFrom + "/" + messageTo,
+                    method: "GET",
+                    dataType: 'json', // type of response data
+
+                    success: function (data) {
+                        console.log("Suces: ", data);
+                        showMessage(data, messageFrom, messageTo);// Show Message Between Me and My friend
+                    },
+                    error: function (err) {
+                         console.log("Error: ", err) 
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: "http://localhost:52996/GroupUsers/GetMessages/" + messageFrom + "/" + messageTo,
+                    method: "GET",
+                    success: function (messages) {
+                        console.log("Suces: ", messages);// Messages
+                        $.ajax({
+                            url: "http://localhost:52996/Users/GetId/" + messageFrom,
+                            method: "GET",
+                            success: function (userId) {
+                                console.log("Suces UserId: ", userId);
+                                showMessage(messages, messageFrom, messageTo, userId);// Show Message Between Me and My friend
+
+                            },
+                            error: function (err) {
+                                // console.log("Error: ", err) 
+                            }
+                        });// Ajax Get Group 
+                    },
+                    error: function (err) {
+                        // console.log("Error: ", err) 
+                    }
+                });// Ajax Get Group 
+
+               
+
+
+
+            }
+           
+            removeActiveChatClass();// Remove Active Chat
+            $(event.path[3]).addClass("active_chat");
+            msgHistoryDiv = $('.msg_history')[0]; msgHistoryDiv.scrollTop = msgHistoryDiv.scrollHeight;
+
+             }//MessageUSer
+
+        function AddToGroup(groupName) {
+
+            // Message from == User, messageTo == Group
+            _Proxy.server.joinGroup(messageFrom, groupName);
+
+
+
+        }// Add To Group
+
+
+        function showMessage(messages, messageFrom, messageTo, userId) {
+            console.log("Show Message: ", messages, messageFrom, messageTo);
+            $(".msg_history").html('');
+            console.log(typeof messages);
+            messages = JSON.parse("[" + messages + "]");
+            [messages] = messages;
+            console.log("llljjk ", messages)
+            if (!isGroup) {
+                // Display Message
+                messages.forEach((message) => {
+                    console.log("jjj", message)
+                    //console.log(message.Message, message.UserSender.Name, message.UserReciver.Name, message.Time);
+                    messageDate = getMessageTime(message.Time);
+
+                    if (message.UserSender.Name == messageFrom) {
+                        senderMessages(message.Message, messageDate);
+                    } else {
+                        reciverMessages(message.Message, messageDate);
+                    }
+
+
+                });// For Each
+
+            } else { //Group
+                console.log("Group", messages)
+                // First Message
+                console.log(messages[0].UserId , userId)
+                messageDate = getMessageTime(messages[0].Time);
+                if (messages[0].UserId == userId) {
+
+                    senderMessages(messages[0].Message, messageDate);
+                } else {
+                    reciverMessages(messages[0].Message, messageDate);
+                }
+                // All Messages
+                console.log(messages[0].Group.GroupUsers)
+                messages[0].Group.GroupUsers.forEach((message) => {
+                    if (message.Message != "" && message.Message != undefined ) {
+                        if (message.UserId == userId) {
+
+                            senderMessages(message.Message, messageDate);
+                        } else {
+                            reciverMessages(message.Message, messageDate);
+                        }
+                    }
+
+                });
+
+
+            }
+
+
+
+
+
+
+
+        }// ShowMessage
+
+
+        function senderMessages(message, messageDate) {
+            console.log("Sender message: ", message, " Date: ", messageDate);
+            $(".msg_history").append(`
+             
+                <div class="outgoing_msg">
+                    <div class="sent_msg">
+                        <p>
+                           ${message}
+                                </p>
+                        <span class="time_date"> ${messageDate}</span>
+                    </div>
+                </div>`)
+        }// Sender Messages
+
+
+        function reciverMessages(message, messageDate) {
+
+            $(".msg_history").append(`
+                <div class="incoming_msg" >
+                    <div class="incoming_msg_img">
+                            <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil">
+                    </div>
+                     <div class="received_msg">
+                        <div class="received_withd_msg">
+                                <p>
+                                   ${message}
+                                        </p>
+                                <span class="time_date">${messageDate}</span>
+                         </div>
+                    </div>
+                </div>
+
+               `)
+        }// Reciver Messages
+
+
+        function removeActiveChatClass() {
+           
+            $(".chat_list").each((i,divChatList) => {
+                if ($(divChatList).hasClass("active_chat")) {
+                    $(divChatList).removeClass("active_chat");
+                }
+
+            });//Foreach
+
+
+        }// remove Active Class when I connect with my friend
+
+        function getMessageTime(jsonTime) {
+            console.log(jsonTime);
+            let date,
+                hours,
+                minute,
+                AMPM;
+            const monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.",
+                "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."
+            ];
+            date = new Date(jsonTime.match(/\d+/)[0] * 1);
+            console.log(date)
+            minute = date.getMinutes();
+            minute = minute <= 9 ? "0" + minute.toString() : minute.toString();
+
+            hours = date.getHours();
+            minute = hours <= 9 ? "0" + hours.toString() : hours.toString();
+
+            // AM Or PM
+            if (hours >= 12 && hours <= 24) {
+                AMPM = "PM";
+            } else { AMPM = "AM"; }
+
+
+            return `${hours}:${minute} ${AMPM} | ${monthNames[date.getMonth()]} ${date.getDay()}`;
+
+
+
+        }// get date of message
+
+    </script>
+</body>
+</html>

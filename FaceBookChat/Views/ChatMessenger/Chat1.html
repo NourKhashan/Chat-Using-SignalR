@@ -1,0 +1,387 @@
+﻿@model FaceBookChat.ViewModels.MessagesWithUsers
+@{
+    Layout = null;
+    var messageFrom = Session["UserName"];
+}
+
+<!DOCTYPE html>
+
+
+<!------ Include the above in your HEAD tag ---------->
+
+<html>
+<head>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet" />
+    <link href="~/Content/fontawesome/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" />
+
+    @*
+    <link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/savanihd/multi-select-autocomplete/master/style.css" />*@
+    <link href="~/Content/Chat1.css" rel="stylesheet" />
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+
+    @*
+    <script src="https://raw.githubusercontent.com/savanihd/multi-select-autocomplete/master/autocomplete.multiselect.js"></script>*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+    <div class="container">
+        <h3 class=" text-center">Messaging @messageFrom</h3>
+        <div class="messaging">
+            <div class="inbox_msg">
+                <div class="inbox_people">
+                    <div class="headind_srch">
+                        <div class="recent_heading">
+                            <h4>Recent</h4>
+                        </div>
+                        <div class="srch_bar">
+                            <div class="stylish-input-group">
+                                <i class="fa fa-users" aria-hidden="true" style="cursor:pointer" data-toggle="modal" data-target="#modalGroup"></i>
+
+                                <input type="text" class="search-bar" placeholder="Search">
+                                <span class="input-group-addon">
+                                    <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="inbox_chat">
+
+                        <!--Start-->
+                        @foreach (var item in Model.Users)
+                        {
+                        if (!item.Name.Equals(messageFrom))
+                        {
+                        <div class="chat_list" style="cursor:pointer;" onclick="UserMessage('@item.Name', event)">
+                            <div class="chat_people">
+                                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                                <div class="chat_ib">
+
+                                    <h5>@item.Name<span class="chat_date">Dec 25</span></h5>
+                                    <p>
+                                        Test, which is a new approach to have all solutions
+                                        astrology under one roof.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                        }
+
+                        <!--End-->
+
+
+                    </div>
+                </div>
+                <!--Right-->
+                <div class="mesgs">
+                    <div class="msg_history">
+                        <!--Incoming My Friend-->
+                        <!--OutComing ME -->
+
+
+                    </div>
+                    <div class="type_msg">
+                        <div class="input_msg_write">
+                            <input type="text" class="write_msg" placeholder="Type a message" />
+                            <button class="msg_send_btn" type="submit" onclick="sendMSG('@messageFrom')"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <p class="text-center top_spac"> Design by <a target="_blank" href="#">Sunil Rajput</a></p>
+
+        </div>
+    </div>
+    <div class="modal fade" id="modalGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100 font-weight-bold">New Group</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+                    <div class="md-form mb-5">
+                        <input type="text" class="form-control validate" placeholder="Group Name">
+                        @*<label data-error="wrong" data-success="right" for="defaultForm-email">Your email</label>*@
+                    </div>
+                    <input id="myAutocomplete" type="text" />
+
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-default">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal" data-target="#modalLoginForm">
+            Launch
+            Modal Login Form
+        </a>
+    </div>
+
+    <!--Scripts-->
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.4.0.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script>
+
+        // myDiv = $('.msg_history')[0]; myDiv.scrollTop = myDiv.scrollHeight
+        msgHistoryDiv = $('.msg_history')[0]; msgHistoryDiv.scrollTop = msgHistoryDiv.scrollHeight
+
+        let _Proxy,
+            messageTo,
+            messageFrom;
+        $(function () {
+
+
+            r availableTags = [
+                "ActionScript",
+                "AppleScript",
+                "Asp",
+                "BASIC",
+                "C",
+                "C++",
+                "Clojure",
+                "COBOL",
+                "ColdFusion",
+                "Erlang",
+                "Fortran",
+                "Groovy",
+                "Haskell",
+                "Java",
+                "JavaScript",
+                "Lisp",
+                "Perl",
+                "PHP",
+                "Python",
+                "Ruby",
+                "Scala",
+                "Scheme"
+            ];
+            $('#myAutocomplete').autocomplete({
+                source: availableTags,
+                multiselect: true
+            });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            messageFrom = '@Session["UserName"]'
+
+            _Proxy = $.connection.messageHub;
+            $.connection.hub.start();
+
+            //BroadCast To Sender
+            _Proxy.client.broadCastMessageToSender = function (from, message) {
+                console.log("Broadcast Message Sender", from, message);
+
+                console.log("UserName", messageFrom);
+                let messageDate = getMessageTime(message.Time);
+
+                senderMessages(message, messageDate);
+
+                msgHistoryDiv = $('.msg_history')[0]; msgHistoryDiv.scrollTop = msgHistoryDiv.scrollHeight
+
+
+            }// BroadCast To Sender
+
+
+            //BroadCast To Reciver
+            _Proxy.client.broadCastMessageToReciver = function (to, message) {
+                console.log("Broadcast Message Reciver", to, messageTo);
+                //From Check
+
+                let messageDate = getMessageTime(message.Time);
+
+                reciverMessages(message, messageDate);
+                msgHistoryDiv = $('.msg_history')[0]; msgHistoryDiv.scrollTop = msgHistoryDiv.scrollHeight
+
+
+            }// BroadCast To Reciever
+        });// Load
+
+        // Send Message To my friend
+        function sendMSG(messageFrom) {
+            console.log(`Click button `);
+            console.log(messageFrom, messageTo, $(".write_msg").val());
+
+            _Proxy.server.sendMessage(messageFrom, messageTo, $(".write_msg").val());
+        }
+
+
+        // All Messages Between Me && My Friend
+        function UserMessage(_messageTo, event) {
+            messageTo = _messageTo;
+
+            console.log("Message Between Me and My Friend " + messageTo + event);
+            //  Ajax
+            $.ajax({
+                url: "http://localhost:52996/MessageUsers/GetMessages/" + messageFrom + "/" + messageTo,
+                method: "GET",
+                success: function (data) {
+                    //console.log("Suces: ", data);
+                    showMessage(data, messageFrom, messageTo);// Show Message Between Me and My friend
+                },
+                error: function (err) {
+                    // console.log("Error: ", err)
+                }
+            });
+            msgHistoryDiv = $('.msg_history')[0]; msgHistoryDiv.scrollTop = msgHistoryDiv.scrollHeight;// Scroll Down
+            removeActiveChatClass();// Remove Active Chat
+            $(event.path[3]).addClass("active_chat");
+
+        }//MessageUSer
+
+
+
+
+        function showMessage(messages, messageFrom, messageTo) {
+            console.log("Show Message: ", messages, messageFrom, messageTo);
+            $(".msg_history").html('');
+
+            // Display Message
+            messages.forEach((message) => {
+                //console.log(message.Message, message.UserSender.Name, message.UserReciver.Name, message.Time);
+                messageDate = getMessageTime(message.Time);
+                if (message.UserSender.Name == messageFrom) {
+                    senderMessages(message.Message, messageDate);
+                } else {
+                    reciverMessages(message.Message, messageDate);
+                }
+            });// For Each
+
+
+
+
+
+
+
+        }// ShowMessage
+
+
+        function senderMessages(message, messageDate) {
+
+            $(".msg_history").append(`
+
+                <div class="outgoing_msg">
+                    <div class="sent_msg">
+                        <p>
+                           ${message}
+                                </p>
+                        <span class="time_date"> ${messageDate}</span>
+                    </div>
+                </div>`)
+        }// Sender Messages
+
+
+        function reciverMessages(message, messageDate) {
+
+            $(".msg_history").append(`
+                <div class="incoming_msg" >
+                    <div class="incoming_msg_img">
+                            <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil">
+                    </div>
+                     <div class="received_msg">
+                        <div class="received_withd_msg">
+                                <p>
+                                   ${message}
+                                        </p>
+                                <span class="time_date">${messageDate}</span>
+                         </div>
+                    </div>
+                </div>
+
+               `)
+        }// Reciver Messages
+
+
+        function removeActiveChatClass() {
+
+            $(".chat_list").each((i, divChatList) => {
+                if ($(divChatList).hasClass("active_chat")) {
+                    $(divChatList).removeClass("active_chat");
+                }
+
+            });//Foreach
+
+
+        }// remove Active Class when I connect with my friend
+
+        function getMessageTime(jsonTime) {
+            console.log(jsonTime);
+            let date,
+                hours,
+                minute,
+                AMPM;
+            const monthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.",
+                "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."
+            ];
+            date = new Date(jsonTime.match(/\d+/)[0] * 1);
+            console.log(date)
+            minute = date.getMinutes();
+            minute = minute <= 9 ? "0" + minute.toString() : minute.toString();
+
+            hours = date.getHours();
+            minute = hours <= 9 ? "0" + hours.toString() : hours.toString();
+
+            // AM Or PM
+            if (hours >= 12 && hours <= 24) {
+                AMPM = "PM";
+            } else { AMPM = "AM"; }
+
+
+            return `${hours}:${minute} ${AMPM} | ${monthNames[date.getMonth()]} ${date.getDay()}`;
+
+
+
+        }// get date of message
+
+
+
+
+
+
+
+
+    </script>
+</body>
+</html>
