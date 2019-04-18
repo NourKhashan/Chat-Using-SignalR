@@ -36,27 +36,44 @@ namespace FaceBookChat.Controllers
         }
 
         // GET: Groups/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+        //public ActionResult Create()
+        //{
+        //    return View();
+        //}
 
         // POST: Groups/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,UserID")] Group group)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Groups.Add(group);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
 
-            return View(group);
+        public ActionResult Create( String name)
+        {
+            if (db.Groups.Any(grp=>grp.Name == name))
+            {
+                ModelState.AddModelError("", "Group Name Exists Already");
+                return Json("Error", JsonRequestBehavior.AllowGet);
+
+            }
+            var count = (db.Groups.Count() + 1).ToString();
+            db.Groups.Add(new Group() {Id= count,  Name= name});
+            db.SaveChanges();
+      
+            return Json("Done", JsonRequestBehavior.AllowGet);
+           // return View(group);
         }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Create([Bind(Include = "Id,Name,UserID")] Group group)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        db.Groups.Add(group);
+        //        db.SaveChanges();
+        //        return RedirectToAction("Index");
+        //    }
+
+        //    return View(group);
+        //}
 
         // GET: Groups/Edit/5
         public ActionResult Edit(string id)

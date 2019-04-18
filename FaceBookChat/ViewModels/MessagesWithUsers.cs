@@ -12,6 +12,8 @@ namespace FaceBookChat.ViewModels
         public List<Group> Groups { get; set; }
 
         public MessageUser messageUser { get; set; }
+        public List<MessageUser> messageUserlst { get; set; }
         public GroupUsers groupUsers { get; set; }
+        public List<GroupUsers> groupUserslst { get; set; }
     }
 }

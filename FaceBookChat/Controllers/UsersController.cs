@@ -38,11 +38,16 @@ namespace FaceBookChat.Controllers
             }
             if (ModelState.IsValid && UserFounded != null)
             {
+                var userId = db.Users.SingleOrDefault(user => user.Name == Name).Id;
                 MessagesWithUsers messagesWithUsers = new MessagesWithUsers();
                 messagesWithUsers.Users = db.Users.ToList<User>();
                 messagesWithUsers.Groups = db.Groups.ToList<Group>();
                 messagesWithUsers.messageUser = db.MessageUsers.OrderByDescending(d => d.Time).FirstOrDefault();
                 messagesWithUsers.groupUsers = db.GroupUsers.OrderByDescending(d => d.Time).FirstOrDefault();
+
+                messagesWithUsers.messageUserlst= GetLastMessage(messagesWithUsers.Users, userId);
+                messagesWithUsers.groupUserslst= GetLastMessageGroups(messagesWithUsers.Groups, userId);
+
                 Users.GetUserName = Name;
                 Session["UserName"] = Name;
                 return View("../ChatMessenger/Chat", messagesWithUsers);
@@ -52,6 +57,40 @@ namespace FaceBookChat.Controllers
                 
         }   
 
+        public List<MessageUser> GetLastMessage(List<User> users, string userFrom)
+        {
+            List<MessageUser> AllLastMessages = new List<MessageUser>();
+            foreach (var userTo in users)
+            {
+                if(userTo.Id != userFrom)
+                {
+                    List<MessageUser> mess = db.MessageUsers.OrderByDescending(d => d.Time).ToList<MessageUser>();
+                    MessageUser m = mess.Where(ur => (ur.ReciverId == userTo.Id && ur.SenderId == userFrom) || (ur.SenderId == userTo.Id && ur.ReciverId == userFrom)).FirstOrDefault();
+                    if (m == null)
+                        m = new MessageUser() { Message = "Hi There", Time = DateTime.Now };
+                    AllLastMessages.Add(m);
+                }
+               
+            }
+            return AllLastMessages;
+        }
+
+        public List<GroupUsers> GetLastMessageGroups(List<Group> groups, string userFrom)
+        {
+            List<GroupUsers> AllLastMessages = new List<GroupUsers>();
+            foreach (var userTo in groups)
+            {
+                
+                    List<GroupUsers> mess = db.GroupUsers.OrderByDescending(d => d.Time).ToList<GroupUsers>();
+                    GroupUsers m = mess.Where(ur => (ur.GroupId == userTo.Id && ur.UserId == userFrom) || (ur.GroupId == userTo.Id && ur.UserId == userFrom)).FirstOrDefault();
+                if (m == null)
+                    m = new GroupUsers() { Message = "Hi There", Time = DateTime.Now };
+                AllLastMessages.Add(m);
+                
+
+            }
+            return AllLastMessages;
+        }
         // GET: Users
         public ActionResult Index()
         {
